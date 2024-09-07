@@ -1,38 +1,47 @@
 import React, { useState, useEffect } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { checkAuthState, signInWithGooglePopup, logout } from "./firebase";
+import Home from "./Home";
+import Login from "./Login";
 
 function App() {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     const loggedInUser = await signInWithGooglePopup();
-    setUser(loggedInUser);
+    if (loggedInUser) {
+      setUser(loggedInUser);
+      navigate("/home"); // Redirect to /home after login
+    }
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     setUser(null);
+    navigate("/login"); // Redirect to home or login page after logout
   };
 
-  // Check user authentication state on component mount
   useEffect(() => {
     checkAuthState((currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        navigate("/home"); // Redirect to /home if user is authenticated
+      }
     });
-  }, []);
+  }, [navigate]);
 
   return (
-    <div className="App">
-      <h1>Firebase Google Authentication</h1>
-      {!user ? (
-        <button onClick={handleLogin}>Login with Google</button>
-      ) : (
-        <>
-          <p>Welcome, {user.displayName}</p>
-          <button onClick={handleLogout}>Logout</button>
-        </>
-      )}
-    </div>
+    <Routes>
+      <Route path="/login" element={
+        !user ? (
+          <Login onLogin={handleLogin} />
+        ) : (
+          <Home onLogout={handleLogout} />
+        )
+      } />
+      <Route path="/home" element={<Home onLogout={handleLogout} />} />
+    </Routes>
   );
 }
 

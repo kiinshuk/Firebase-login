@@ -4,18 +4,14 @@ import {
   signOut, 
   onAuthStateChanged, 
   GoogleAuthProvider, 
-  signInWithPopup 
+  signInWithPopup, 
+  signInWithRedirect,
+  getRedirectResult
 } from "firebase/auth";
 
 // Your Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDfR219yp3HvoUbE0ETsClzJDAxjODVt20",
-    authDomain: "velzon-96021.firebaseapp.com",
-    projectId: "velzon-96021",
-    storageBucket: "velzon-96021.appspot.com",
-    messagingSenderId: "1019766720517",
-    appId: "1:1019766720517:web:bb52f2214aa173db69346c",
-    measurementId: "G-VW2G7QRM9V"
+    
 };
 
 // Initialize Firebase
@@ -36,11 +32,36 @@ const signInWithGooglePopup = async () => {
   }
 };
 
+// Function for Google sign-in using Redirect
+const signInWithGoogleRedirect = async () => {
+  try {
+    await signInWithRedirect(auth, googleProvider);
+  } catch (error) {
+    console.error("Error during sign-in:", error);
+  }
+};
+
 // Function to check authentication state
 const checkAuthState = (callback) => {
   onAuthStateChanged(auth, (user) => {
     callback(user);
   });
+};
+
+// Function to handle redirect result after login
+const handleRedirectResult = async () => {
+  try {
+    const result = await getRedirectResult(auth);
+    if (result) {
+      const user = result.user;
+      console.log("User signed in after redirect:", user);
+      return user;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error during redirect result handling:", error);
+    return null;
+  }
 };
 
 // Sign out function
@@ -53,4 +74,4 @@ const logout = async () => {
   }
 };
 
-export { auth, checkAuthState, signInWithGooglePopup, logout };
+export { auth, signInWithGooglePopup, signInWithGoogleRedirect, checkAuthState, handleRedirectResult, logout };

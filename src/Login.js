@@ -1,22 +1,10 @@
-import React, { useState } from "react";
-import { googleSignInWithPopup } from "./firebase";
+import React from 'react';
 
-function Login() {
-  const [user, setUser] = useState(null);
-
-  const handleLogin = async () => {
-    const signedInUser = await googleSignInWithPopup();
-    setUser(signedInUser);
-  };
-
+function Login({ onLogin }) {
   return (
     <div className="Login">
       <h1>Login Page</h1>
-      {!user ? (
-        <button onClick={handleLogin}>Login with Google</button>
-      ) : (
-        <p>Welcome, {user.displayName}</p>
-      )}
+      <button onClick={onLogin}>Login with Google</button>
     </div>
   );
 }

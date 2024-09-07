@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';  // Import createRoot instead of ReactDOM.render
+import { BrowserRouter } from 'react-router-dom'; // Import BrowserRouter
 import App from './App';
-import { BrowserRouter } from 'react-router-dom';
 
 // Find the root DOM element
 const rootElement = document.getElementById('root');
